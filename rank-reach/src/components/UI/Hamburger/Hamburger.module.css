@@ -1,0 +1,80 @@
+/* Always pin to header's right corner */
+.container {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1600; /* above the fixed header */
+}
+
+.hamburger {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: var(--iaf-sky-blue);
+  color: var(--iaf-deep-blue);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.06s ease, box-shadow 0.2s ease;
+}
+.hamburger:hover {
+  background: #88c7ff;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
+}
+.hamburger:active {
+  transform: translateY(1px);
+}
+
+.bar {
+  width: 20px;
+  height: 2px;
+  background: var(--iaf-deep-blue);
+  display: block;
+  margin: 2px 0;
+  border-radius: 2px;
+}
+
+.menu {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: 220px;
+  max-height: 0;
+  overflow: hidden;
+  background: var(--iaf-light);
+  border: 1px solid var(--iaf-steel);
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  transition: max-height 0.22s ease, padding 0.22s ease;
+  padding: 0 8px;
+}
+.open {
+  max-height: 260px;
+  padding: 8px;
+}
+
+.item {
+  width: 100%;
+  text-align: right;
+  padding: 10px 12px;
+  background: var(--iaf-white);
+  color: var(--iaf-black);
+  border: 1px solid var(--iaf-steel);
+  border-radius: 10px;
+  margin: 6px 0;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.2s ease;
+}
+.item:hover {
+  background: var(--iaf-light);
+  border-color: var(--iaf-sky-blue);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.active {
+  border-color: var(--iaf-sky-blue);
+  box-shadow: 0 0 0 2px rgba(107, 183, 255, 0.35) inset;
+}

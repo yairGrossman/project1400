@@ -1,0 +1,25 @@
+:root {
+  --iaf-deep-blue: #1f4e79;
+  --iaf-sky-blue: #6bb7ff;
+  --iaf-steel: #7c8c9a;
+  --iaf-light: #b0c7d1;
+  --iaf-white: #ffffff;
+  --iaf-black: #1a1a1a;
+
+  --header-height: 120px;
+}
+
+html,
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: var(--iaf-deep-blue);
+  font-family: "Segoe UI", "Roboto", system-ui, -apple-system, sans-serif;
+}

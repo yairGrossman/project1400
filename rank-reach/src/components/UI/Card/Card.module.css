@@ -1,0 +1,29 @@
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--iaf-light);
+  border: 1px solid var(--iaf-steel);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.header {
+  background: var(--iaf-deep-blue);
+  padding: 16px 20px;
+}
+.title {
+  margin: 0;
+  color: var(--iaf-white);
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: 0.5px;
+}
+
+.body {
+  padding: 20px;
+}
+.footer {
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.08);
+}
