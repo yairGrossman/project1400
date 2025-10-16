@@ -19,9 +19,17 @@ var cs = builder.Configuration.GetConnectionString("Sql")
          ?? throw new InvalidOperationException("Missing ConnectionStrings:Sql");
 builder.Services.AddSingleton<ISqlConnectionFactory>(new SqlConnectionFactory(cs));
 builder.Services.AddScoped<ISoldierRepository, SoldierRepository>();
+builder.Services.AddScoped<ISoldierRequestRepository, SoldierRequestRepository>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<ICommanderRequestsRepository, CommanderRequestsRepository>();
+builder.Services.AddScoped<IWeeklyFeedbackRepository, WeeklyFeedbackRepository>();
 
 // BL
 builder.Services.AddScoped<ISoldierService, SoldierService>();
+builder.Services.AddScoped<ISoldierRequestService, SoldierRequestService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<ICommanderRequestsService, CommanderRequestsService>();
+builder.Services.AddScoped<IWeeklyFeedbackService, WeeklyFeedbackService>();
 
 
 var app = builder.Build();
