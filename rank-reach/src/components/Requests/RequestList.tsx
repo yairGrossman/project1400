@@ -7,19 +7,16 @@ export type Request = {
   id: string;
   name: string;
   notes: string;
+  date?: string; // only for approved
+  location?: string; // only for approved
 };
 
-const demoRequests: Request[] = [
-  { id: "1", name: "חופל", notes: "בדיקה רפואית בסיסית." },
-  { id: "2", name: "תש", notes: "תשאול/תחקיר קצר מול המפקד." },
-  { id: "3", name: "רופא", notes: "פגישה עם רופא היחידה." },
-  { id: "4", name: "בקשת יציאה", notes: "בקשה ליציאה מוקדמת/חופשה." },
-  { id: "5", name: "חופל", notes: "מועד שני לבדיקה." },
-  { id: "6", name: "רופא", notes: "בדיקת המשך." },
-  { id: "7", name: "תש", notes: "עידכון נתונים." },
-];
+interface Props {
+  items: Request[];
+  variant: "unanswered" | "approved" | "rejected";
+}
 
-export default function RequestList() {
+export default function RequestList({ items, variant }: Props) {
   const [selected, setSelected] = useState<Request | null>(null);
 
   const open = (req: Request) => setSelected(req);
@@ -28,7 +25,7 @@ export default function RequestList() {
   return (
     <>
       <div className={styles.list} role="list">
-        {demoRequests.map((req) => (
+        {items.map((req) => (
           <RequestItem key={req.id} request={req} onOpen={open} />
         ))}
       </div>
@@ -39,10 +36,28 @@ export default function RequestList() {
             <span className={styles.label}>שם הבקשה:</span>
             <span className={styles.value}>{selected?.name}</span>
           </div>
+
+          {/* notes always */}
           <div className={styles.row}>
             <span className={styles.label}>הערות:</span>
             <span className={styles.value}>{selected?.notes || "—"}</span>
           </div>
+
+          {/* extra fields only for approved */}
+          {variant === "approved" && (
+            <>
+              <div className={styles.row}>
+                <span className={styles.label}>תאריך:</span>
+                <span className={styles.value}>{selected?.date || "—"}</span>
+              </div>
+              <div className={styles.row}>
+                <span className={styles.label}>מיקום:</span>
+                <span className={styles.value}>
+                  {selected?.location || "—"}
+                </span>
+              </div>
+            </>
+          )}
         </div>
       </Modal>
     </>

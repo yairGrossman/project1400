@@ -1,51 +1,56 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./Hamburger.module.css";
+import type { ViewKey } from "../../types/requests";
 
-export interface HamburgerItem<T extends string = string> {
-  id: T;
+export interface MenuItem {
+  id: ViewKey;
   label: string;
 }
 
-interface Props<T extends string = string> {
-  items: HamburgerItem<T>[];
-  activeId?: T;
-  onSelect: (id: T) => void;
-  className?: string;
+interface Props {
+  items: MenuItem[];
+  onSelect: (id: ViewKey) => void;
+  ariaLabel?: string;
 }
 
-export default function Hamburger<T extends string = string>({
+export default function Hamburger({
   items,
-  activeId,
   onSelect,
-  className = "",
-}: Props<T>) {
+  ariaLabel = "תפריט",
+}: Props) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const onDocClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node))
-        setOpen(false);
-    };
-    const onEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("click", onDocClick);
-    document.addEventListener("keydown", onEsc);
-    return () => {
-      document.removeEventListener("click", onDocClick);
-      document.removeEventListener("keydown", onEsc);
-    };
+    function onDocClick(e: MouseEvent) {
+      if (!ref.current) return;
+      if (!ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  const handleSelect = (id: ViewKey) => {
+    onSelect(id);
+    setOpen(false);
+  };
+
   return (
-    <div ref={ref} className={`${styles.container} ${className}`} dir="rtl">
+    <div className={styles.root} ref={ref} dir="rtl">
       <button
         type="button"
-        className={styles.hamburger}
-        aria-label="תפריט"
+        className={styles.button}
+        aria-label={ariaLabel}
         aria-expanded={open}
-        onClick={() => setOpen((x) => !x)}
+        onClick={() => setOpen((v) => !v)}
       >
         <span className={styles.bar} />
         <span className={styles.bar} />
@@ -53,19 +58,15 @@ export default function Hamburger<T extends string = string>({
       </button>
 
       <div className={`${styles.menu} ${open ? styles.open : ""}`} role="menu">
-        {items.map((it) => (
+        {items.map((mi) => (
           <button
-            key={it.id}
-            className={`${styles.item} ${
-              activeId === it.id ? styles.active : ""
-            }`}
+            key={mi.id}
+            type="button"
+            className={styles.item}
             role="menuitem"
-            onClick={() => {
-              onSelect(it.id);
-              setOpen(false);
-            }}
+            onClick={() => handleSelect(mi.id)}
           >
-            {it.label}
+            {mi.label}
           </button>
         ))}
       </div>
