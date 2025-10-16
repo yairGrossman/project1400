@@ -1,0 +1,27 @@
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 14px;
+  border: 1px solid var(--iaf-steel);
+  background: var(--iaf-white);
+  color: var(--iaf-black);
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.06s ease, box-shadow 0.2s ease, border-color 0.2s ease,
+    background 0.2s ease;
+}
+.item:hover {
+  border-color: var(--iaf-sky-blue);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  background: var(--iaf-light);
+}
+.item:active {
+  transform: translateY(1px);
+}
+
+.name {
+  font-weight: 700;
+  font-size: 0.98rem;
+}

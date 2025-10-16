@@ -1,0 +1,59 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* push right group to edge */
+  height: var(--header-height);
+  padding: 0 24px 0 40px; /* a bit narrower on right to fit hamburger */
+  background: var(--iaf-deep-blue);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 1000;
+}
+
+.leftGroup {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--iaf-sky-blue);
+  background: var(--iaf-steel);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.logo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(107, 183, 255, 0.7);
+}
+
+.title {
+  color: var(--iaf-white);
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+.title::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 80px;
+  height: 3px;
+  background: var(--iaf-sky-blue);
+  border-radius: 2px;
+}
+
+.rightGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

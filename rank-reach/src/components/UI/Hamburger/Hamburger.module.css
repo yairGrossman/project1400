@@ -1,0 +1,82 @@
+.root {
+  position: relative;
+}
+
+/* Classic header icon */
+.button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.button:hover {
+  opacity: 0.8;
+}
+
+.bar {
+  width: 26px;
+  height: 3px;
+  background: var(--iaf-white);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* “X” animation when open */
+.button[aria-expanded="true"] .bar:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.button[aria-expanded="true"] .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.button[aria-expanded="true"] .bar:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Dropdown menu */
+.menu {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  width: 220px;
+  max-height: 0;
+  overflow: hidden;
+  background: var(--iaf-light);
+  border: 1px solid var(--iaf-steel);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  transition: max-height 0.25s ease, padding 0.25s ease;
+  z-index: 1200;
+}
+
+.open {
+  max-height: 240px;
+  padding: 10px;
+}
+
+.item {
+  width: 100%;
+  text-align: right;
+  padding: 14px 14px;
+  border: none;
+  background: transparent;
+  color: var(--iaf-black);
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.item:hover {
+  background: var(--iaf-light);
+}

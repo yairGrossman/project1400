@@ -1,0 +1,150 @@
+.container {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1500;
+}
+
+/* Floating Action Button */
+.fab {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50%;
+  background: var(--iaf-sky-blue);
+  color: var(--iaf-deep-blue);
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.06s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.fab:hover {
+  background: #88c7ff;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+.fab:active {
+  transform: translateY(1px);
+}
+
+.plus {
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 800;
+}
+
+/* Hover tooltip */
+.tooltip {
+  position: absolute;
+  right: 72px;
+  bottom: 50%;
+  transform: translateY(50%);
+  background: var(--iaf-deep-blue);
+  color: var(--iaf-white);
+  padding: 6px 10px;
+  border: 1px solid var(--iaf-steel);
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.fab:hover .tooltip {
+  opacity: 1;
+}
+
+/* Sliding menu panel */
+.menu {
+  position: absolute;
+  right: 0;
+  bottom: 76px; /* sits above the FAB */
+  display: grid;
+  gap: 8px;
+  width: 180px;
+  max-height: 0;
+  overflow: hidden;
+  background: var(--iaf-light);
+  border: 1px solid var(--iaf-steel);
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  padding: 0 10px;
+  transition: max-height 0.25s ease, padding 0.25s ease;
+}
+.open {
+  max-height: 260px; /* enough for 4 items */
+  padding: 10px;
+}
+
+.menuItem {
+  padding: 10px 12px;
+  border: 1px solid var(--iaf-steel);
+  background: var(--iaf-white);
+  color: var(--iaf-black);
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.2s ease;
+}
+.menuItem:hover {
+  background: var(--iaf-light);
+  border-color: var(--iaf-sky-blue);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal form styling (uses the same palette) */
+.form {
+  display: grid;
+  gap: 14px;
+}
+.formRow {
+  display: grid;
+  gap: 8px;
+}
+.label {
+  color: var(--iaf-deep-blue);
+  font-weight: 800;
+}
+.textarea {
+  border: 1px solid var(--iaf-steel);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--iaf-white);
+  color: var(--iaf-black);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  resize: vertical;
+}
+.textarea:focus {
+  border-color: var(--iaf-sky-blue);
+  box-shadow: 0 0 0 3px rgba(107, 183, 255, 0.3);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-start;
+}
+.submit {
+  padding: 10px 14px;
+  background: var(--iaf-sky-blue);
+  color: var(--iaf-deep-blue);
+  border: none;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: background 0.15s ease, box-shadow 0.2s ease, transform 0.06s ease;
+}
+.submit:hover {
+  background: #88c7ff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+.submit:active {
+  transform: translateY(1px);
+}

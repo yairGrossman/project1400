@@ -1,0 +1,42 @@
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+
+  /* scrollbar when many rows (keeps earlier behavior) */
+  max-height: 320px;
+  overflow-y: auto;
+  padding-inline: 2px;
+}
+
+.list::-webkit-scrollbar {
+  width: 8px;
+}
+.list::-webkit-scrollbar-thumb {
+  background: var(--iaf-steel);
+  border-radius: 8px;
+}
+.list::-webkit-scrollbar-track {
+  background: var(--iaf-light);
+}
+
+.modalContent {
+  display: grid;
+  gap: 12px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.label {
+  color: var(--iaf-deep-blue);
+  font-weight: 800;
+}
+
+.value {
+  color: var(--iaf-black);
+}
