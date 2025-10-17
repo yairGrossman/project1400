@@ -1,3 +1,9 @@
+export interface SoldierRequestCreate {
+  soldierId: number;
+  requestId: number;
+  comment?: string | null;
+}
+
 export interface SoldierRequestRead {
   soldierRequestId: number;
   soldierId: number;
