@@ -9,8 +9,8 @@ public class SoldierService : ISoldierService
     private readonly ISoldierRepository _repo;
     public SoldierService(ISoldierRepository repo) => _repo = repo;
 
-    public async Task<Soldier?> GetAsync(int soldierId)
-        => soldierId <= 0 ? null : await _repo.GetByIdAsync(soldierId);
+    public async Task<Soldier?> GetAsync(string soldierEmail)
+        =>  await _repo.GetByEmailAsync(soldierEmail);
 
     public async Task<int> CreateAsync(SoldierCreate payload)
     {

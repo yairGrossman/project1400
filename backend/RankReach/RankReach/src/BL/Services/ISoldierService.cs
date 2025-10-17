@@ -6,6 +6,6 @@ namespace RankReach.BL.Services;
  */
 public interface ISoldierService
 {
-    Task<Soldier?> GetAsync(int soldierId);
+    Task<Soldier?> GetAsync(string soldierEmail);
     Task<int> CreateAsync(SoldierCreate payload);
 }

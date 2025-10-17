@@ -2,14 +2,33 @@ import React, { useState } from "react";
 import type { FormEvent } from "react";
 import Card from "../UI/Card/Card";
 import styles from "./Login.module.css";
+import { useSoldier } from "../../context/useSoldier";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
+  const { fetchByEmail, clearError } = useSoldier();
+  const navigate = useNavigate();
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Login with:", email);
-    // TODO: integrate real auth
+    clearError();
+
+    const result = await fetchByEmail(email);
+
+    if (result) {
+      console.log("Fetched soldier: ", result);
+      switch (result.soldierType) {
+        case 1:
+          navigate("/soldier");
+          break;
+        case 2:
+          navigate("/commander");
+          break;
+        default:
+          navigate("/");
+      }
+    }
   };
 
   return (

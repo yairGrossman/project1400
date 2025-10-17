@@ -3,7 +3,7 @@ import styles from "./Header.module.css";
 import iafLogo from "../../assets/rank_reach_logo.png";
 import Hamburger from "../UI/Hamburger/Hamburger";
 import type { MenuItem } from "../UI/Hamburger/Hamburger";
-import type { ViewKey } from "../types/requests";
+import type { ViewKey } from "../../types/requests";
 
 interface Props {
   onMenuSelect?: (id: ViewKey) => void;

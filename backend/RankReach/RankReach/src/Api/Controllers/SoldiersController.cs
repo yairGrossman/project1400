@@ -12,13 +12,13 @@ public class SoldiersController : ControllerBase
     private readonly ISoldierService _service;
     public SoldiersController(ISoldierService service) => _service = service;
 
-    /*GET /api/soldiers/{id} – fetch single soldier*/
-    [HttpGet("{id:int}")]
+    /*GET /api/soldiers/{email} – fetch single soldier*/
+    [HttpGet("by-email/{email}")]
     [ProducesResponseType(typeof(Soldier), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Soldier>> Get(int id)
+    public async Task<ActionResult<Soldier>> Get([FromRoute] string email)
     {
-        var soldier = await _service.GetAsync(id);
+        var soldier = await _service.GetAsync(email);
         if (soldier is null) return NotFound();
         return Ok(soldier);
     }

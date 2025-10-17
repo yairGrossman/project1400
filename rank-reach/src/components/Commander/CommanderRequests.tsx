@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./CommanderRequests.module.css";
 import Card from "../UI/Card/Card";
 import Modal from "../UI/Modal/Modal";
-import type { ViewKey } from "../types/requests";
+import type { ViewKey } from "../../types/requests";
 
 /* ---- Types ---- */
 type CategoryKey = "חופל" | "תש" | "רופא" | "בקשת יציאה";

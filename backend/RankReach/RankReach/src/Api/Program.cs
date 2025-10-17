@@ -3,10 +3,22 @@ using RankReach.DAL.Infrastructure;
 using RankReach.DAL.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
- 
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// CORS configuration
+var allowedOrigin = "http://localhost:5173";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactDevOrigin", policy =>
+    {
+        policy.WithOrigins(allowedOrigin)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 /**
  * Dependency Injection setup:
@@ -42,6 +54,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("ReactDevOrigin");
 
 /**
  * Simple test endpoint to verify server is alive

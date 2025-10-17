@@ -7,6 +7,6 @@ namespace RankReach.DAL.Repositories;
  */
 public interface ISoldierRepository
 {
-    Task<Soldier?> GetByIdAsync(int soldierId);
+    Task<Soldier?> GetByEmailAsync(string soldierEmail);
     Task<int> AddAsync(SoldierCreate payload);
 }

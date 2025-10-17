@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Hamburger.module.css";
-import type { ViewKey } from "../../types/requests";
+import type { ViewKey } from "../../../types/requests";
 
 export interface MenuItem {
   id: ViewKey;

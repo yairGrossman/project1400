@@ -3,7 +3,7 @@ import Card from "../UI/Card/Card";
 import RequestList from "../Requests/RequestList";
 import type { Request } from "../Requests/RequestList";
 import NewRequestFab from "../Requests/NewRequestFab";
-import type { ViewKey } from "../types/requests";
+import type { ViewKey } from "../../types/requests";
 
 /* Demo data */
 const unanswered: Request[] = [

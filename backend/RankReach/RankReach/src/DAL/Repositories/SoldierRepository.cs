@@ -11,13 +11,13 @@ public class SoldierRepository : ISoldierRepository
     private readonly ISqlConnectionFactory _connFactory;
     public SoldierRepository(ISqlConnectionFactory connFactory) => _connFactory = connFactory;
 
-    public async Task<Soldier?> GetByIdAsync(int soldierId)
+    public async Task<Soldier?> GetByEmailAsync(string soldierEmail)
     {
         using var conn = _connFactory.Create();
         var spName = StoredProc.GetSoldier.ToName();
 
         var param = new DynamicParameters();
-        param.Add("soldierId", soldierId, DbType.Int32);
+        param.Add("soldierEmail", soldierEmail, DbType.String);
 
         return await conn.QueryFirstOrDefaultAsync<Soldier>(
             spName, param, commandType: CommandType.StoredProcedure);
