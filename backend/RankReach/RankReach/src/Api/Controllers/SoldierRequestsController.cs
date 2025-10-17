@@ -15,9 +15,11 @@ public class SoldierRequestsController : ControllerBase
     // GET /api/soldierrequests/{soldierId}
     [HttpGet("{soldierId:int}")]
     [ProducesResponseType(typeof(IEnumerable<SoldierRequestRead>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<SoldierRequestRead>>> GetBySoldier(int soldierId)
+    public async Task<ActionResult<IEnumerable<SoldierRequestRead>>> GetBySoldier(
+    int soldierId,
+    [FromQuery] int? statusId = null)
     {
-        var items = await _service.GetBySoldierIdAsync(soldierId);
+        var items = await _service.GetBySoldierIdAsync(soldierId, statusId);
         return Ok(items);
     }
 

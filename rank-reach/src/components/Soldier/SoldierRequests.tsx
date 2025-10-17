@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo } from "react";
 import styles from "./SoldierRequests.module.css";
 import Card from "../UI/Card/Card";
 import RequestList from "../Requests/RequestList";
@@ -5,43 +6,8 @@ import type { Request } from "../Requests/RequestList";
 import NewRequestFab from "../Requests/NewRequestFab";
 import type { ViewKey } from "../../types/requests";
 
-/* Demo data */
-const unanswered: Request[] = [
-  { id: "1", name: "חופל", notes: "בדיקה רפואית בסיסית." },
-  { id: "2", name: "תש", notes: "תשאול/תחקיר קצר מול המפקד." },
-  { id: "3", name: "רופא", notes: "פגישה עם רופא היחידה." },
-  { id: "4", name: "בקשת יציאה", notes: "בקשה ליציאה מוקדמת/חופשה." },
-  { id: "5", name: "חופל", notes: "מועד שני לבדיקה." },
-];
-
-const approved: Request[] = [
-  {
-    id: "11",
-    name: "רופא",
-    notes: "תיאום בוצע.",
-    date: "2025-10-20 09:30",
-    location: "מרפאה גדודית",
-  },
-  {
-    id: "12",
-    name: "בקשת יציאה",
-    notes: "אושרה לשישי.",
-    date: "2025-10-24",
-    location: "בסיס נווה",
-  },
-  {
-    id: "13",
-    name: "תש",
-    notes: "תחקיר קצר לאחר תורנות.",
-    date: "2025-10-22 16:00",
-    location: "חדר מפקד",
-  },
-];
-
-const rejected: Request[] = [
-  { id: "21", name: "בקשת יציאה", notes: "חוסר כוח אדם במשמרת." },
-  { id: "22", name: "רופא", notes: "לא סופקו מסמכים נדרשים." },
-];
+import { useSoldier } from "../../context/soldier/useSoldier";
+import { useSoldierRequests } from "../../context/soldierRequests/useSoldierRequests";
 
 const cardTitles: Record<ViewKey, string> = {
   unanswered: "בקשות שלא נענו",
@@ -49,24 +15,60 @@ const cardTitles: Record<ViewKey, string> = {
   rejected: "בקשות שלא אושרו",
 };
 
+const statusMap: Record<ViewKey, number> = {
+  unanswered: 0,
+  approved: 1,
+  rejected: 2,
+};
+
 interface Props {
   view: ViewKey;
 }
 
 export default function SoldierRequests({ view }: Props) {
-  const data =
-    view === "unanswered"
-      ? unanswered
-      : view === "approved"
-      ? approved
-      : rejected;
+  const { soldier } = useSoldier();
+  const { items, loading, error, fetchBySoldier, clearError } =
+    useSoldierRequests();
+
+  // Fetch when soldier or view changes
+  useEffect(() => {
+    if (!soldier) return;
+    clearError();
+    const statusId = statusMap[view];
+    void fetchBySoldier(soldier.soldierId, statusId);
+  }, [soldier, view, fetchBySoldier, clearError]);
+
+  // Map API rows -> RequestList items
+  const data: Request[] = useMemo(() => {
+    return items.map((r) => ({
+      id: String(r.soldierRequestId),
+      name: r.requestName, // tiny-card title
+      notes: r.comment ?? "", // shown in popup
+      // For approved we may also have appointment info (modal uses these when variant="approved")
+      date: r.appointmentDate ?? undefined,
+      location: r.appointmentLocation ?? undefined,
+    }));
+  }, [items]);
 
   return (
     <section className={styles.wrapper} dir="rtl">
       <h2 className={styles.pageTitle}>הבקשות שלי</h2>
 
       <Card title={cardTitles[view]}>
-        <RequestList items={data} variant={view} />
+        {/* States: not logged in / loading / error / empty / list */}
+        {!soldier ? (
+          <p style={{ color: "var(--iaf-white)", margin: 0 }}>לא מחובר</p>
+        ) : loading ? (
+          <p style={{ color: "var(--iaf-white)", margin: 0 }}>טוען...</p>
+        ) : error ? (
+          <p style={{ color: "var(--iaf-white)", margin: 0 }}>שגיאה: {error}</p>
+        ) : data.length === 0 ? (
+          <p style={{ color: "var(--iaf-white)", margin: 0 }}>
+            אין בקשות להצגה
+          </p>
+        ) : (
+          <RequestList items={data} variant={view} />
+        )}
       </Card>
 
       <NewRequestFab />

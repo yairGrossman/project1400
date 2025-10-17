@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import type { FormEvent } from "react";
 import Card from "../UI/Card/Card";
 import styles from "./Login.module.css";
-import { useSoldier } from "../../context/useSoldier";
+import { useSoldier } from "../../context/soldier/useSoldier";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {

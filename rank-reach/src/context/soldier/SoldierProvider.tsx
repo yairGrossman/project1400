@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
 import { SoldierContext } from "./SoldierContext";
-import { fetchSoldierByEmail } from "../api/soldierApi";
-import type { Soldier } from "../types/soldier";
+import { fetchSoldierByEmail } from "../../api/soldierApi";
+import type { Soldier } from "../../types/soldier";
 
 export function SoldierProvider({ children }: PropsWithChildren) {
   const [soldier, setSoldier] = useState<Soldier | null>(null);

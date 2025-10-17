@@ -8,10 +8,10 @@ public class SoldierRequestService : ISoldierRequestService
     private readonly ISoldierRequestRepository _repo;
     public SoldierRequestService(ISoldierRequestRepository repo) => _repo = repo;
 
-    public async Task<IEnumerable<SoldierRequestRead>> GetBySoldierIdAsync(int soldierId)
+    public async Task<IEnumerable<SoldierRequestRead>> GetBySoldierIdAsync(int soldierId, int? statusId = null)
     {
         if (soldierId <= 0) return Array.Empty<SoldierRequestRead>();
-        return await _repo.GetBySoldierIdAsync(soldierId);
+        return await _repo.GetBySoldierIdAsync(soldierId, statusId);
     }
 
     public async Task AddAsync(SoldierRequestCreate payload)
