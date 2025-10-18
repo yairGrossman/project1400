@@ -1,16 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Hamburger.module.css";
-import type { ViewKey } from "../../../types/requests";
 import { useNavigate } from "react-router-dom";
 
 export interface MenuItem {
-  id: ViewKey;
+  id: string;
   label: string;
 }
 
 interface Props {
   items: MenuItem[];
-  onSelect: (id: ViewKey) => void;
+  onSelect: (id: string) => void;
   ariaLabel?: string;
 }
 
@@ -40,7 +39,7 @@ export default function Hamburger({
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  const handleSelect = (id: ViewKey) => {
+  const handleSelect = (id: string) => {
     onSelect(id);
     setOpen(false);
   };
