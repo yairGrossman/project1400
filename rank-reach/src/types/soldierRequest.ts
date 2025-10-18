@@ -19,3 +19,9 @@ export interface SoldierRequestRead {
   appointmentDate?: string | null; // ISO or null
   appointmentLocation?: string | null; // or null
 }
+
+export interface SoldierRequestUpdate {
+  soldierRequestId: number;
+  requestStatus: number; // 0=unanswered, 1=approved, 2=rejected
+  appointmentId?: number | null;
+}

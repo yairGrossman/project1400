@@ -5,14 +5,17 @@ import { BrowserRouter } from "react-router-dom";
 import { SoldierProvider } from "./context/soldier/SoldierProvider";
 import { SoldierRequestsProvider } from "./context/soldierRequests/SoldierRequestsProvider";
 import "./styles/variables.css";
+import { CommanderRequestsProvider } from "./context/commanderRequests/CommanderRequestsProvider";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <SoldierProvider>
       <SoldierRequestsProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <CommanderRequestsProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </CommanderRequestsProvider>
       </SoldierRequestsProvider>
     </SoldierProvider>
   </React.StrictMode>

@@ -1,121 +1,74 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./CommanderRequests.module.css";
 import Card from "../UI/Card/Card";
 import Modal from "../UI/Modal/Modal";
 import type { ViewKey } from "../../types/requests";
+import { useSoldier } from "../../context/soldier/useSoldier";
+import { updateSoldierRequest } from "../../api/soldierRequestsApi";
+import { useCommanderRequests } from "../../context/commanderRequests/useCommanderRequests";
+import { createAppointment } from "../../api/appointmentsApi";
+import type { SoldierRequestRead } from "../../types/soldierRequest";
 
-/* ---- Types ---- */
 type CategoryKey = "חופל" | "תש" | "רופא" | "בקשת יציאה";
 
-export interface SoldierRequestRow {
-  id: string;
-  name: string; // soldier name
-  personalNumber: string; // מספר אישי
-  notes: string; // הערות
-  category: CategoryKey;
-}
-
-/* ---- Demo data (unanswered) ---- */
-const demoUnanswered: SoldierRequestRow[] = [
-  {
-    id: "s1",
-    name: "יאיר גרוסמן",
-    personalNumber: "1234567",
-    notes: "כאבי ראש חוזרים.",
-    category: "רופא",
-  },
-  {
-    id: "s2",
-    name: "דני לוי",
-    personalNumber: "2345678",
-    notes: "בדיקת המשך.",
-    category: "חופל",
-  },
-  {
-    id: "s3",
-    name: "נועם כהן",
-    personalNumber: "3456789",
-    notes: "תשאול לאחר תורנות.",
-    category: "תש",
-  },
-  {
-    id: "s4",
-    name: "אור בן חור",
-    personalNumber: "4567890",
-    notes: "בקשה לחופשה בשישי.",
-    category: "בקשת יציאה",
-  },
-  {
-    id: "s5",
-    name: "אורי גבע",
-    personalNumber: "5678901",
-    notes: "בדיקת חופל ראשונית.",
-    category: "חופל",
-  },
-];
-
-/* Optionally you can prepare demo for approved / rejected as well */
-const demoApproved: SoldierRequestRow[] = [
-  {
-    id: "a1",
-    name: "אלעד שלו",
-    personalNumber: "1122334",
-    notes: "רופא - תיאום נקבע.",
-    category: "רופא",
-  },
-  {
-    id: "a2",
-    name: "גל מזרחי",
-    personalNumber: "2233445",
-    notes: "תש - שיחה קצרה.",
-    category: "תש",
-  },
-];
-
-const demoRejected: SoldierRequestRow[] = [
-  {
-    id: "r1",
-    name: "עדן ברק",
-    personalNumber: "9988776",
-    notes: 'בקשת יציאה נדחתה: מחסור בכ"א.',
-    category: "בקשת יציאה",
-  },
-];
-
-/* ---- Titles ---- */
 const titles: Record<ViewKey, string> = {
   unanswered: "בקשות שלא נענו",
   approved: "בקשות שאושרו",
   rejected: "בקשות שלא אושרו",
 };
 
+const statusMap: Record<ViewKey, 0 | 1 | 2> = {
+  unanswered: 0,
+  approved: 1,
+  rejected: 2,
+};
+
+const fmt = (s?: string | null) => (s ? new Date(s).toLocaleString() : "—");
+
 interface Props {
-  view: ViewKey; // controlled from App (like Type 1)
+  view: ViewKey;
 }
 
 export default function CommanderRequests({ view }: Props) {
-  const [selected, setSelected] = useState<SoldierRequestRow | null>(null);
-  const [approvedMode, setApprovedMode] = useState(false); // after pressing "אישור"
-  const [dateTime, setDateTime] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
+  const { soldier } = useSoldier(); // commander logged in (soldierType === 2)
+  const { items, loading, error, fetchByStatus, clearError } =
+    useCommanderRequests();
 
-  // choose dataset by view (demo)
-  const rows =
-    view === "unanswered"
-      ? demoUnanswered
-      : view === "approved"
-      ? demoApproved
-      : demoRejected;
+  const [selected, setSelected] = useState<SoldierRequestRead | null>(null);
+  const [approvedMode, setApprovedMode] = useState(false);
+  const [dateTime, setDateTime] = useState("");
+  const [location, setLocation] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  // split by category to render four cards
-  const byCategory: Record<CategoryKey, SoldierRequestRow[]> = {
-    חופל: rows.filter((r) => r.category === "חופל"),
-    תש: rows.filter((r) => r.category === "תש"),
-    רופא: rows.filter((r) => r.category === "רופא"),
-    "בקשת יציאה": rows.filter((r) => r.category === "בקשת יציאה"),
-  };
+  // If user navigates to approved/rejected, make sure scheduling mode is off
+  useEffect(() => {
+    setApprovedMode(false);
+  }, [view]);
 
-  const openRow = (row: SoldierRequestRow) => {
+  // Fetch whenever commanderId or view changes
+  useEffect(() => {
+    if (!soldier) return;
+    clearError();
+    const status = statusMap[view];
+    void fetchByStatus(soldier.soldierId, status);
+  }, [soldier, view, fetchByStatus, clearError]); // functions are stable (useCallback)
+
+  // Group by request name for the 4 cards
+  const byCategory = useMemo(() => {
+    const map: Record<CategoryKey, SoldierRequestRead[]> = {
+      חופל: [],
+      תש: [],
+      רופא: [],
+      "בקשת יציאה": [],
+    };
+    items.forEach((r) => {
+      const key = (r.requestName as CategoryKey) || "חופל";
+      if (map[key]) map[key].push(r);
+    });
+    return map;
+  }, [items]);
+
+  const openRow = (row: SoldierRequestRead) => {
     setSelected(row);
     setApprovedMode(false);
     setDateTime("");
@@ -128,78 +81,143 @@ export default function CommanderRequests({ view }: Props) {
     setLocation("");
   };
 
-  const onApprove = () => {
-    setApprovedMode(true); // show date/location + "שלח לחייל"
+  const onApprove = () => setApprovedMode(true);
+
+  const onReject = async () => {
+    if (!selected || !soldier) return;
+    try {
+      setSaving(true);
+
+      await updateSoldierRequest({
+        soldierRequestId: selected.soldierRequestId,
+        requestStatus: 2, // 2 = rejected
+        appointmentId: null,
+      });
+
+      // Refresh the current view (0/1/2 based on the top menu)
+      await fetchByStatus(soldier.soldierId, statusMap[view]);
+
+      closeModal();
+    } catch (err: any) {
+      // You can show a toast or inline error; keeping it simple here:
+      console.error(err?.message ?? "שגיאה בעדכון הבקשה");
+    } finally {
+      setSaving(false);
+    }
   };
-  const onReject = () => {
-    // demo: just log and close (you can wire to API)
-    console.log("Rejected:", selected);
-    closeModal();
-  };
-  const onSendToSoldier = () => {
-    console.log("Send to soldier:", {
-      selected,
-      dateTime,
-      location,
-    });
-    closeModal();
+
+  const onSendToSoldier = async () => {
+    if (!selected || !soldier) return;
+
+    // basic validation
+    if (!dateTime || !location.trim()) {
+      // you can show a nicer inline error/toast if you want
+      console.warn("Must provide date/time and location");
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      // Convert the datetime-local (e.g. "2025-10-22T16:00") to ISO
+      // If you want to keep it as local time on the server, you can send the raw string.
+      const iso = new Date(dateTime).toISOString();
+
+      // 1) Create the appointment
+      const appointmentId = await createAppointment({
+        appointmentDate: iso,
+        appointmentLocation: location.trim(),
+      });
+
+      // 2) Approve the soldier request with the new appointmentId
+      await updateSoldierRequest({
+        soldierRequestId: selected.soldierRequestId,
+        requestStatus: 1, // 1 = approved
+        appointmentId,
+      });
+
+      // 3) Refresh the current list (based on the menu view)
+      await fetchByStatus(soldier.soldierId, statusMap[view]);
+
+      closeModal();
+    } catch (err: any) {
+      console.error(err?.message ?? "שגיאה בשליחה לחייל");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <section className={styles.wrapper} dir="rtl">
       <h2 className={styles.pageTitle}>{titles[view]}</h2>
 
-      <div className={styles.grid}>
-        {(["חופל", "תש", "רופא", "בקשת יציאה"] as CategoryKey[]).map((cat) => (
-          <Card key={cat} title={cat}>
-            <ul className={styles.list} role="list">
-              {byCategory[cat].length > 0 ? (
-                byCategory[cat].map((row) => (
-                  <li key={row.id} className={styles.item} role="listitem">
-                    <button
-                      type="button"
-                      className={styles.itemBtn}
-                      onClick={() => openRow(row)}
-                    >
-                      {row.name}
-                    </button>
-                  </li>
-                ))
-              ) : (
-                <li className={styles.empty}>—</li>
-              )}
-            </ul>
-          </Card>
-        ))}
-      </div>
+      {/* ...existing loading/error blocks... */}
 
-      {/* Popup */}
+      {!loading && !error && soldier && (
+        <div className={styles.grid}>
+          {(["חופל", "תש", "רופא", "בקשת יציאה"] as CategoryKey[]).map(
+            (cat) => (
+              <Card key={cat} title={cat}>
+                <ul className={styles.list} role="list">
+                  {byCategory[cat].length > 0 ? (
+                    byCategory[cat].map((row) => (
+                      <li
+                        key={row.soldierRequestId}
+                        className={styles.item}
+                        role="listitem"
+                      >
+                        <button
+                          type="button"
+                          className={styles.itemBtn}
+                          onClick={() => openRow(row)}
+                        >
+                          {row.firstName} {row.lastName}
+                        </button>
+                      </li>
+                    ))
+                  ) : (
+                    <li className={styles.empty}>—</li>
+                  )}
+                </ul>
+              </Card>
+            )
+          )}
+        </div>
+      )}
+
       <Modal
         open={!!selected}
-        title={selected ? `${selected.category} — ${selected.name}` : undefined}
+        title={
+          selected
+            ? `${selected.requestName} — ${selected.firstName} ${selected.lastName}`
+            : undefined
+        }
         onClose={closeModal}
       >
         {selected && (
           <div className={styles.modalBody} dir="rtl">
             <div className={styles.row}>
               <span className={styles.label}>שם:</span>
-              <span className={styles.value}>{selected.name}</span>
+              <span className={styles.value}>
+                {selected.firstName} {selected.lastName}
+              </span>
             </div>
             <div className={styles.row}>
               <span className={styles.label}>מספר אישי:</span>
-              <span className={styles.value}>{selected.personalNumber}</span>
+              <span className={styles.value}>{selected.soldierId}</span>
             </div>
             <div className={styles.row}>
               <span className={styles.label}>הערות:</span>
-              <span className={styles.value}>{selected.notes || "—"}</span>
+              <span className={styles.value}>{selected.comment ?? "—"}</span>
             </div>
 
-            {!approvedMode && (
+            {view === "unanswered" && !approvedMode && (
               <div className={styles.actions}>
                 <button
                   type="button"
                   className={styles.approve}
                   onClick={onApprove}
+                  disabled={saving}
                 >
                   אישור
                 </button>
@@ -207,13 +225,14 @@ export default function CommanderRequests({ view }: Props) {
                   type="button"
                   className={styles.reject}
                   onClick={onReject}
+                  disabled={saving}
                 >
                   דחייה
                 </button>
               </div>
             )}
 
-            {approvedMode && (
+            {view === "unanswered" && approvedMode && (
               <>
                 <div className={styles.row}>
                   <label htmlFor="dt" className={styles.label}>
@@ -240,15 +259,32 @@ export default function CommanderRequests({ view }: Props) {
                     onChange={(e) => setLocation(e.target.value)}
                   />
                 </div>
-
                 <div className={styles.actions}>
                   <button
                     type="button"
                     className={styles.send}
                     onClick={onSendToSoldier}
+                    disabled={saving}
                   >
-                    שלח לחייל
+                    {saving ? "שולח..." : "שלח לחייל"}
                   </button>
+                </div>
+              </>
+            )}
+
+            {view === "approved" && (
+              <>
+                <div className={styles.row}>
+                  <span className={styles.label}>תאריך:</span>
+                  <span className={styles.value}>
+                    {fmt(selected.appointmentDate)}
+                  </span>
+                </div>
+                <div className={styles.row}>
+                  <span className={styles.label}>מיקום:</span>
+                  <span className={styles.value}>
+                    {selected.appointmentLocation ?? "—"}
+                  </span>
                 </div>
               </>
             )}

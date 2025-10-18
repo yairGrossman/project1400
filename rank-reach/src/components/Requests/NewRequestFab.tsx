@@ -10,7 +10,6 @@ type RequestType = "חופל" | "תש" | "רופא" | "בקשת יציאה";
 
 const REQUEST_TYPES: RequestType[] = ["חופל", "תש", "רופא", "בקשת יציאה"];
 
-// TODO: replace with your real DB IDs
 const REQUEST_ID_BY_NAME: Record<RequestType, number> = {
   חופל: 1,
   תש: 2,
@@ -61,7 +60,6 @@ export default function NewRequestFab() {
       const result = await createSoldierRequest(payload);
 
       if (result.ok) {
-        // ✅ Immediately refresh the soldier's "unanswered" list
         await fetchBySoldier(soldier.soldierId, STATUS_UNANSWERED);
         closeModal();
       } else {
