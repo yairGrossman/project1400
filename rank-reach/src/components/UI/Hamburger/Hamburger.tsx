@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Hamburger.module.css";
 import type { ViewKey } from "../../../types/requests";
+import { useNavigate } from "react-router-dom";
 
 export interface MenuItem {
   id: ViewKey;
@@ -20,6 +21,7 @@ export default function Hamburger({
 }: Props) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -41,6 +43,11 @@ export default function Hamburger({
   const handleSelect = (id: ViewKey) => {
     onSelect(id);
     setOpen(false);
+  };
+
+  const handleDisconnect = () => {
+    setOpen(false);
+    navigate("/");
   };
 
   return (
@@ -69,6 +76,15 @@ export default function Hamburger({
             {mi.label}
           </button>
         ))}
+        <hr className={styles.separator} />
+        <button
+          type="button"
+          className={`${styles.item} ${styles.disconnect}`}
+          role="menuitem"
+          onClick={handleDisconnect}
+        >
+          התנתק
+        </button>
       </div>
     </div>
   );

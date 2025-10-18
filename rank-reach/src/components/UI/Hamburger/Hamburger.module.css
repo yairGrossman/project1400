@@ -80,3 +80,21 @@
 .item:hover {
   background: var(--iaf-light);
 }
+
+.separator {
+  border: none;
+  border-top: 1px solid var(--iaf-steel);
+  margin: 8px 0;
+}
+
+.disconnect {
+  color: var(--iaf-deep-blue);
+  font-weight: 700;
+  background: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.disconnect:hover {
+  background: var(--iaf-sky-blue);
+  color: var(--iaf-black);
+}

@@ -4,6 +4,7 @@ import iafLogo from "../../assets/rank_reach_logo.png";
 import Hamburger from "../UI/Hamburger/Hamburger";
 import type { MenuItem } from "../UI/Hamburger/Hamburger";
 import type { ViewKey } from "../../types/requests";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   onMenuSelect?: (id: ViewKey) => void;
@@ -16,6 +17,9 @@ const defaultItems: MenuItem[] = [
 ];
 
 export default function Header({ onMenuSelect }: Props) {
+  const location = useLocation();
+  const isRoot = location.pathname === "/";
+
   return (
     <header className={styles.header}>
       <div className={styles.leftGroup}>
@@ -23,9 +27,14 @@ export default function Header({ onMenuSelect }: Props) {
         <h1 className={styles.title}>Rank Reach</h1>
       </div>
 
-      <div className={styles.rightGroup}>
-        <Hamburger items={defaultItems} onSelect={(id) => onMenuSelect?.(id)} />
-      </div>
+      {!isRoot && (
+        <div className={styles.rightGroup}>
+          <Hamburger
+            items={defaultItems}
+            onSelect={(id) => onMenuSelect?.(id)}
+          />
+        </div>
+      )}
     </header>
   );
 }
