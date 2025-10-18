@@ -4,7 +4,8 @@ import Header from "./components/Header/Header";
 import Login from "./components/Login/Login";
 import SoldierRequests from "./components/Soldier/SoldierRequests";
 import CommanderRequests from "./components/Commander/CommanderRequests";
-import WeeklyFeedback from "./components/Soldier/WeeklyFeedback/WeeklyFeedback"; // 👈 add
+import WeeklyFeedback from "./components/Soldier/WeeklyFeedback/WeeklyFeedback";
+import CourseFeedback from "./components/SubjectCommader/CourseFeedback";
 import styles from "./App.module.css";
 import type { ViewKey } from "./types/requests";
 
@@ -23,6 +24,7 @@ export default function App() {
             path="/commander"
             element={<CommanderRequests view={view} />}
           />
+          <Route path="/subjectcommander" element={<CourseFeedback />} />
         </Routes>
       </main>
     </>

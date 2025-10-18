@@ -25,6 +25,9 @@ export default function Login() {
         case 2:
           navigate("/commander");
           break;
+        case 3:
+          navigate("/subjectcommander");
+          break;
         default:
           navigate("/");
       }
