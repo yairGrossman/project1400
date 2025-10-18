@@ -25,6 +25,8 @@ export default function Header({ onMenuSelect }: Props) {
 
   if (soldier?.soldierType === 1) {
     items.push({ id: "weekly-feedback", label: "סקר שבועי" });
+  } else if (soldier?.soldierType === 3) {
+    items.length = 0;
   }
 
   const handleSelect = (id: string) => {

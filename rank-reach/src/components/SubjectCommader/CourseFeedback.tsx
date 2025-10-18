@@ -1,37 +1,14 @@
-import React, { useMemo, useState } from "react";
+import { useState, useEffect } from "react";
 import type { ChangeEvent } from "react";
 import styles from "./CourseFeedback.module.css";
 import Card from "../UI/Card/Card";
-
-type FeedbackItem = {
-  id: number;
-  date: string; // "YYYY-MM-DD"
-  content: string; // anonymous text
-};
-
-/** Demo data (anonymous) */
-const DEMO_FEEDBACK: FeedbackItem[] = [
-  {
-    id: 1,
-    date: "2025-10-13",
-    content: "שבוע עמוס אבל למדתי המון. עבודה צוות עבדה מצוין.",
-  },
-  {
-    id: 2,
-    date: "2025-10-13",
-    content: "היה מאתגר, אשמח ליותר תרגולים מעשיים.",
-  },
-  { id: 3, date: "2025-10-14", content: "קצב טוב, המדריכים סבלניים ומדויקים." },
-  { id: 4, date: "2025-10-15", content: "הייתה עומס משימות, כדאי לפזר יותר." },
-  {
-    id: 5,
-    date: "2025-10-17",
-    content: "שיפור גדול בתיאום בין הזמנים לשיעורים.",
-  },
-];
+import { useSoldier } from "../../context/soldier/useSoldier";
+import { fetchCourseWeeklyFeedback } from "../../api/weeklyFeedbackApi";
+import type { CourseFeedbackRead } from "../../types/weeklyFeedback";
 
 export default function CourseFeedback() {
-  // Default to today's date in YYYY-MM-DD
+  const { soldier } = useSoldier();
+
   const today = new Date();
   const pad = (n: number) => String(n).padStart(2, "0");
   const defaultDate = `${today.getFullYear()}-${pad(
@@ -39,20 +16,38 @@ export default function CourseFeedback() {
   )}-${pad(today.getDate())}`;
 
   const [selectedDate, setSelectedDate] = useState<string>(defaultDate);
+  const [items, setItems] = useState<CourseFeedbackRead[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onChangeDate = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(e.target.value);
   };
 
-  const filtered = useMemo(
-    () => DEMO_FEEDBACK.filter((f) => f.date === selectedDate),
-    [selectedDate]
-  );
+  useEffect(() => {
+    const load = async () => {
+      if (!soldier?.courseId || !selectedDate) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchCourseWeeklyFeedback(
+          soldier.courseId,
+          selectedDate
+        );
+        setItems(data);
+      } catch (e: any) {
+        setError(e?.message ?? "שגיאה בטעינת המשובים");
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    void load();
+  }, [soldier?.courseId, selectedDate]);
 
   return (
     <section className={styles.wrapper} dir="rtl">
       <div className={styles.container}>
-        {/* Controls aligned to the same width as the card */}
         <div className={styles.controls}>
           <label htmlFor="weekDate" className={styles.label}>
             בחר תאריך:
@@ -67,13 +62,19 @@ export default function CourseFeedback() {
         </div>
 
         <Card title={`סקר שבועי — ${selectedDate}`}>
-          {filtered.length === 0 ? (
+          {!soldier?.courseId ? (
+            <p className={styles.empty}>אין מזהה קורס עבור משתמש זה</p>
+          ) : loading ? (
+            <p className={styles.empty}>טוען...</p>
+          ) : error ? (
+            <p className={styles.empty}>שגיאה: {error}</p>
+          ) : items.length === 0 ? (
             <p className={styles.empty}>אין משובים לתאריך זה</p>
           ) : (
             <ul className={styles.list} role="list">
-              {filtered.map((item) => (
-                <li key={item.id} className={styles.item} role="listitem">
-                  <p className={styles.content}>{item.content}</p>
+              {items.map((item, index) => (
+                <li key={index} className={styles.item} role="listitem">
+                  <p className={styles.content}>{item.review}</p>
                 </li>
               ))}
             </ul>
